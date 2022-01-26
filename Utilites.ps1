@@ -1,4 +1,4 @@
-function Get-PixelCircle{
+function Get-PixelCircle {
    param(
        [parameter(Mandatory=$true)]
         [int] $diameter)
@@ -32,7 +32,7 @@ function Get-PixelCircle{
     }
 }
 
-function ConvertStr-ToUnicode {
+function Convert-StrToUnicode {
     param(
         [string]$str = ""
     )
@@ -50,14 +50,14 @@ function ConvertStr-ToUnicode {
 }
 
 #
-function Get-WanIP{
+function Get-WanIP {
     (Invoke-WebRequest -Uri 'http://www.net.cn/static/customercare/yourip.asp' `
         | Select-String -Pattern "<h2>(\d+\.\d+\.\d+\.\d+)</h2>" `
         | Select-Object -ExpandProperty Matches).Groups[1].Value
 }
 
 #
-function Get-YoutubeThumbnail{
+function Get-YoutubeThumbnail {
     param(
         [parameter(Mandatory=$true)]
         [string]$url)
@@ -68,4 +68,14 @@ function Get-YoutubeThumbnail{
         Set-Clipboard $ret
 	return $ret
     }
+}
+
+function ipInfo($ip) {
+    if ($ip -notmatch "^(?:\d{1,3}\.){3}\d{1,3}$") {
+        Write-Output "ip格式不对"
+        return
+    }
+    $cmd = "ipinfo.io/{0}{1}" -f $ip,"?token=the token"
+    #curl -x $proxy $cmd
+    curl $cmd
 }
