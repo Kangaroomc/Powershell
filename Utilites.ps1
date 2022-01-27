@@ -79,3 +79,36 @@ function ipInfo($ip) {
     #curl -x $proxy $cmd
     curl $cmd
 }
+
+# Get directory or file size.
+function du {
+    param(
+        [parameter(Mandatory=$true)]
+	    [string]$path
+    )
+    if(-not (Test-Path $path)){
+        Write-Host "Path not exits!" -ForegroundColor Yellow
+        return
+    }
+    $thePath = Convert-Path $path
+    $theItem = Get-Item $thePath
+    $theSize = 0
+    $unit = ''
+    if($theItem.PSIsContainer){
+        $theSize = (Get-ChildItem $thePath -Recurse | Measure-Object -Sum Length).Sum + 0
+    }else {
+        $theSize = $theItem.Length
+    }
+    if($theSize -lt 1mb){
+        $theSize =$theSize/1kb
+        $unit = 'kb'
+    }elseif($theSize -lt 1gb){
+        $theSize = $theSize/1mb
+        $unit = 'Mb'
+    }else{
+        $theSize = $theSize/1gb
+        $unit = 'Gb'
+    }
+    $theSize = [System.Math]::Round($theSize,2)
+    return ('{0}{1}' -f $theSize,$unit)
+}
